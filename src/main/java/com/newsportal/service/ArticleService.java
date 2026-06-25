@@ -39,6 +39,11 @@ public class ArticleService {
                 .map(ArticleResponse::new);
     }
 
+    public Page<ArticleResponse> getAllArticlesForAdmin(Pageable pageable) {
+        return articleRepository.findAllAdmin(pageable)
+                .map(ArticleResponse::new);
+    }
+
     public List<ArticleResponse> getFeaturedArticles() {
         return articleRepository.findByFeaturedTrueAndIsDraftFalseOrderByPublishedAtDesc()
                 .stream()
@@ -69,19 +74,27 @@ public class ArticleService {
         }
     }
 
-    public ArticleResponse getArticleById(Long id) {
+    public ArticleResponse getArticleById(Long id, boolean includeDrafts) {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Article not found with id: " + id));
+        if (!includeDrafts && Boolean.TRUE.equals(article.getIsDraft())) {
+            throw new ResourceNotFoundException("Article not found with id: " + id);
+        }
         return new ArticleResponse(article);
     }
 
-    public ArticleResponse getArticleBySlug(String slug) {
+    public ArticleResponse getArticleBySlug(String slug, boolean includeDrafts) {
         Article article = articleRepository.findBySlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("Article not found with slug: " + slug));
+        if (!includeDrafts && Boolean.TRUE.equals(article.getIsDraft())) {
+            throw new ResourceNotFoundException("Article not found with slug: " + slug);
+        }
         return new ArticleResponse(article);
     }
 
     public ArticleResponse createArticle(ArticleRequest request) {
+        validateEditorialChecklist(request);
+
         Author author = authorRepository.findById(request.getAuthorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Author not found with id: " + request.getAuthorId()));
 
@@ -105,12 +118,15 @@ public class ArticleService {
         article.setSeoTitle(request.getSeoTitle());
         article.setSeoDescription(request.getSeoDescription());
         article.setSeoImage(request.getSeoImage());
+        applyEditorialFields(article, request);
 
         Article savedArticle = articleRepository.save(article);
         return new ArticleResponse(savedArticle);
     }
 
     public ArticleResponse updateArticle(Long id, ArticleRequest request) {
+        validateEditorialChecklist(request);
+
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Article not found with id: " + id));
 
@@ -130,6 +146,7 @@ public class ArticleService {
         article.setSeoTitle(request.getSeoTitle());
         article.setSeoDescription(request.getSeoDescription());
         article.setSeoImage(request.getSeoImage());
+        applyEditorialFields(article, request);
 
         Article savedArticle = articleRepository.save(article);
         return new ArticleResponse(savedArticle);
@@ -189,5 +206,40 @@ public class ArticleService {
         } catch (IllegalArgumentException e) {
             throw new BadRequestException("Invalid category: " + category);
         }
+    }
+
+    private void applyEditorialFields(Article article, ArticleRequest request) {
+        article.setAiAssisted(Boolean.TRUE.equals(request.getAiAssisted()));
+        article.setSourceReferences(request.getSourceReferences());
+        article.setReviewedBy(request.getReviewedBy());
+        article.setFactChecked(Boolean.TRUE.equals(request.getFactChecked()));
+        article.setRightsCleared(Boolean.TRUE.equals(request.getRightsCleared()));
+        article.setSensitiveContentReviewed(Boolean.TRUE.equals(request.getSensitiveContentReviewed()));
+    }
+
+    private void validateEditorialChecklist(ArticleRequest request) {
+        if (Boolean.TRUE.equals(request.getIsDraft())) {
+            return;
+        }
+
+        if (isBlank(request.getSourceReferences())) {
+            throw new BadRequestException("Source references are required before publishing");
+        }
+        if (isBlank(request.getReviewedBy())) {
+            throw new BadRequestException("Reviewer name is required before publishing");
+        }
+        if (!Boolean.TRUE.equals(request.getFactChecked())) {
+            throw new BadRequestException("Fact check must be confirmed before publishing");
+        }
+        if (!Boolean.TRUE.equals(request.getRightsCleared())) {
+            throw new BadRequestException("Image/source rights must be confirmed before publishing");
+        }
+        if (!Boolean.TRUE.equals(request.getSensitiveContentReviewed())) {
+            throw new BadRequestException("Sensitive content review must be confirmed before publishing");
+        }
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
     }
 }

@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/authors")
-@CrossOrigin(origins = "*")
 public class AuthorController {
 
     @Autowired

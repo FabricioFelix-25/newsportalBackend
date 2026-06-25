@@ -32,6 +32,12 @@ public class ArticleRequest {
     private String seoTitle;
     private String seoDescription;
     private String seoImage;
+    private Boolean aiAssisted = false;
+    private String sourceReferences;
+    private String reviewedBy;
+    private Boolean factChecked = false;
+    private Boolean rightsCleared = false;
+    private Boolean sensitiveContentReviewed = false;
 
     // Constructors
     public ArticleRequest() {}
@@ -75,4 +81,22 @@ public class ArticleRequest {
 
     public String getSeoImage() { return seoImage; }
     public void setSeoImage(String seoImage) { this.seoImage = seoImage; }
+
+    public Boolean getAiAssisted() { return aiAssisted; }
+    public void setAiAssisted(Boolean aiAssisted) { this.aiAssisted = aiAssisted; }
+
+    public String getSourceReferences() { return sourceReferences; }
+    public void setSourceReferences(String sourceReferences) { this.sourceReferences = sourceReferences; }
+
+    public String getReviewedBy() { return reviewedBy; }
+    public void setReviewedBy(String reviewedBy) { this.reviewedBy = reviewedBy; }
+
+    public Boolean getFactChecked() { return factChecked; }
+    public void setFactChecked(Boolean factChecked) { this.factChecked = factChecked; }
+
+    public Boolean getRightsCleared() { return rightsCleared; }
+    public void setRightsCleared(Boolean rightsCleared) { this.rightsCleared = rightsCleared; }
+
+    public Boolean getSensitiveContentReviewed() { return sensitiveContentReviewed; }
+    public void setSensitiveContentReviewed(Boolean sensitiveContentReviewed) { this.sensitiveContentReviewed = sensitiveContentReviewed; }
 }

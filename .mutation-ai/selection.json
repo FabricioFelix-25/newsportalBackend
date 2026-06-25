@@ -1,0 +1,11 @@
+{
+  "projectRoot" : "C:\\programas\\newsportalBackend",
+  "selectedAt" : "2026-05-21T13:54:18.107981100Z",
+  "totalSelected" : 1,
+  "classes" : [ {
+    "className" : "AuthService",
+    "packageName" : "com.newsportal.service",
+    "fullyQualifiedName" : "com.newsportal.service.AuthService",
+    "relativePath" : "com/newsportal/service/AuthService.java"
+  } ]
+}

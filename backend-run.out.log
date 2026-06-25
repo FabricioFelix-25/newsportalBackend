@@ -1,0 +1,71 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------< com.newsportal:newsportal-backend >------------------
+[INFO] Building newsportal-backend 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.2.0:run (default-cli) > test-compile @ newsportal-backend >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ newsportal-backend ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 3 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ newsportal-backend ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ newsportal-backend ---
+[INFO] skip non existing resourceDirectory C:\programas\newsportalBackend\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ newsportal-backend ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] <<< spring-boot:3.2.0:run (default-cli) < test-compile @ newsportal-backend <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.2.0:run (default-cli) @ newsportal-backend ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.0)
+
+2026-06-03T10:29:46.380-03:00  INFO 12380 --- [AlpesNews Backend] [           main] com.newsportal.NewsPortalApplication     : Starting NewsPortalApplication using Java 25.0.2 with PID 12380 (C:\programas\newsportalBackend\target\classes started by fgb87 in C:\programas\newsportalBackend)
+2026-06-03T10:29:46.381-03:00  INFO 12380 --- [AlpesNews Backend] [           main] com.newsportal.NewsPortalApplication     : No active profile set, falling back to 1 default profile: "default"
+2026-06-03T10:29:46.928-03:00  INFO 12380 --- [AlpesNews Backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-06-03T10:29:47.080-03:00  INFO 12380 --- [AlpesNews Backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 146 ms. Found 4 JPA repository interfaces.
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by org.apache.tomcat.jni.Library in an unnamed module (file:/C:/Users/fgb87/.m2/repository/org/apache/tomcat/embed/tomcat-embed-core/10.1.16/tomcat-embed-core-10.1.16.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+2026-06-03T10:29:47.708-03:00  INFO 12380 --- [AlpesNews Backend] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 9090 (http)
+2026-06-03T10:29:47.716-03:00  INFO 12380 --- [AlpesNews Backend] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-06-03T10:29:47.716-03:00  INFO 12380 --- [AlpesNews Backend] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.16]
+2026-06-03T10:29:47.777-03:00  INFO 12380 --- [AlpesNews Backend] [           main] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring embedded WebApplicationContext
+2026-06-03T10:29:47.778-03:00  INFO 12380 --- [AlpesNews Backend] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1357 ms
+2026-06-03T10:29:47.890-03:00  INFO 12380 --- [AlpesNews Backend] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-06-03T10:29:47.949-03:00  INFO 12380 --- [AlpesNews Backend] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.3.1.Final
+2026-06-03T10:29:47.989-03:00  INFO 12380 --- [AlpesNews Backend] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-06-03T10:29:48.497-03:00  INFO 12380 --- [AlpesNews Backend] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-06-03T10:29:48.527-03:00  INFO 12380 --- [AlpesNews Backend] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-06-03T10:29:49.697-03:00  INFO 12380 --- [AlpesNews Backend] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@664db2ca
+2026-06-03T10:29:49.699-03:00  INFO 12380 --- [AlpesNews Backend] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-06-03T10:29:50.169-03:00  WARN 12380 --- [AlpesNews Backend] [           main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-06-03T10:29:51.690-03:00  INFO 12380 --- [AlpesNews Backend] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-06-03T10:29:52.327-03:00  INFO 12380 --- [AlpesNews Backend] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-06-03T10:29:52.676-03:00  INFO 12380 --- [AlpesNews Backend] [           main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-06-03T10:29:53.590-03:00  WARN 12380 --- [AlpesNews Backend] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-06-03T10:29:53.693-03:00  INFO 12380 --- [AlpesNews Backend] [           main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2026-06-03T10:29:53.843-03:00  INFO 12380 --- [AlpesNews Backend] [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@47c5b16b, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@5ad59bed, org.springframework.security.web.context.SecurityContextHolderFilter@efc5686, org.springframework.security.web.header.HeaderWriterFilter@2531c319, org.springframework.web.filter.CorsFilter@51a94f7f, org.springframework.security.web.authentication.logout.LogoutFilter@59a8891e, com.newsportal.security.JwtAuthenticationFilter@49976824, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@72dc7b05, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@73e45afe, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@5028cec0, org.springframework.security.web.session.SessionManagementFilter@315edc50, org.springframework.security.web.access.ExceptionTranslationFilter@24a301a3, org.springframework.security.web.access.intercept.AuthorizationFilter@24b73741]
+2026-06-03T10:29:54.136-03:00  INFO 12380 --- [AlpesNews Backend] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 9090 (http) with context path '/api'
+2026-06-03T10:29:54.142-03:00  INFO 12380 --- [AlpesNews Backend] [           main] com.newsportal.NewsPortalApplication     : Started NewsPortalApplication in 8.281 seconds (process running for 8.701)
+2026-06-03T10:30:39.474-03:00  INFO 12380 --- [AlpesNews Backend] [nio-9090-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-06-03T10:30:39.474-03:00  INFO 12380 --- [AlpesNews Backend] [nio-9090-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-06-03T10:30:39.475-03:00  INFO 12380 --- [AlpesNews Backend] [nio-9090-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-06-03T10:30:39.486-03:00  WARN 12380 --- [AlpesNews Backend] [nio-9090-exec-1] o.s.w.s.h.HandlerMappingIntrospector     : Cache miss for REQUEST dispatch to '/api/articles' (previous null). Performing MatchableHandlerMapping lookup. This is logged once only at WARN level, and every time at TRACE.
+2026-06-03T22:35:17.803-03:00  WARN 12380 --- [AlpesNews Backend] [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=54s671ms435µs600ns).

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewsPortal Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+    <div class="bg-orb orb-a"></div>
+    <div class="bg-orb orb-b"></div>
+
+    <main class="layout">
+        <header class="topbar card">
+            <div>
+                <p class="eyebrow">Painel Editorial</p>
+                <h1>NewsPortal Studio</h1>
+                <p class="sub">Pesquise pauta, gere rascunho, aprove e publique com fluxo simples.</p>
+            </div>
+
+            <form id="api-config-form" class="api-config">
+                <label for="api-base">Base da API</label>
+                <div class="api-input-row">
+                    <input id="api-base" type="text" placeholder="/api">
+                    <button type="submit">Conectar</button>
+                </div>
+                <small id="api-status" class="muted">Detectando...</small>
+            </form>
+        </header>
+
+        <section class="stats-grid">
+            <article class="card stat-card">
+                <h2>Total</h2>
+                <p id="stat-total">-</p>
+            </article>
+            <article class="card stat-card">
+                <h2>Publicadas</h2>
+                <p id="stat-published">-</p>
+            </article>
+            <article class="card stat-card">
+                <h2>Rascunhos</h2>
+                <p id="stat-drafts">-</p>
+            </article>
+            <article class="card stat-card">
+                <h2>Views (7 dias)</h2>
+                <p id="stat-views">-</p>
+            </article>
+        </section>
+
+        <section class="content-grid">
+            <section class="card panel news-panel">
+                <div class="panel-head">
+                    <h2>Noticias</h2>
+                    <button id="refresh-list" type="button" class="ghost">Atualizar</button>
+                </div>
+
+                <div class="filter-grid">
+                    <input id="search-input" type="search" placeholder="Buscar por titulo, categoria ou tag">
+                    <select id="status-filter">
+                        <option value="all">Todos</option>
+                        <option value="published">Publicadas</option>
+                        <option value="draft">Rascunhos</option>
+                    </select>
+                </div>
+
+                <p id="admin-mode-alert" class="muted hidden"></p>
+                <div id="news-list" class="news-list"></div>
+
+                <div class="pager">
+                    <button id="prev-page" type="button" class="ghost">Anterior</button>
+                    <span id="page-label">Pagina 1</span>
+                    <button id="next-page" type="button" class="ghost">Proxima</button>
+                </div>
+            </section>
+
+            <section class="card panel editor-panel">
+                <div class="panel-head">
+                    <h2>Editor</h2>
+                    <button id="reset-form" type="button" class="ghost">Novo artigo</button>
+                </div>
+
+                <details class="author-box">
+                    <summary>Criar autor rapido</summary>
+                    <form id="author-form" class="author-form">
+                        <div class="field">
+                            <label for="author-name">Nome</label>
+                            <input id="author-name" required>
+                        </div>
+                        <div class="field">
+                            <label for="author-email">Email</label>
+                            <input id="author-email" type="email" required>
+                        </div>
+                        <div class="field">
+                            <label for="author-bio">Bio</label>
+                            <textarea id="author-bio" rows="2"></textarea>
+                        </div>
+                        <div class="field">
+                            <label for="author-avatar">Avatar URL</label>
+                            <input id="author-avatar" type="url">
+                        </div>
+                        <button type="submit">Salvar autor</button>
+                    </form>
+                </details>
+
+                <details class="assistant-box">
+                    <summary>Assistente de rascunho (modo local)</summary>
+                    <div class="field">
+                        <label for="ai-topic">Pauta principal</label>
+                        <input id="ai-topic" placeholder="Ex.: startups de IA no Brasil em 2026">
+                    </div>
+                    <div class="field-grid">
+                        <div class="field">
+                            <label for="ai-angle">Angulo</label>
+                            <input id="ai-angle" placeholder="impacto no mercado e empregos">
+                        </div>
+                        <div class="field">
+                            <label for="ai-tone">Tom</label>
+                            <select id="ai-tone">
+                                <option value="analitico">Analitico</option>
+                                <option value="didatico">Didatico</option>
+                                <option value="opinativo">Opinativo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button id="ai-generate" type="button">Gerar rascunho base</button>
+                </details>
+
+                <form id="article-form" class="editor-form">
+                    <input id="article-id" type="hidden">
+
+                    <div class="field">
+                        <label for="title">Titulo</label>
+                        <input id="title" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="subtitle">Subtitulo</label>
+                        <input id="subtitle">
+                    </div>
+
+                    <div class="field">
+                        <label for="excerpt">Resumo</label>
+                        <textarea id="excerpt" rows="3" required></textarea>
+                    </div>
+
+                    <div class="field">
+                        <label for="content">Texto</label>
+                        <textarea id="content" rows="9" required></textarea>
+                    </div>
+
+                    <div class="field-grid">
+                        <div class="field">
+                            <label for="category">Categoria</label>
+                            <select id="category" required></select>
+                        </div>
+                        <div class="field">
+                            <label for="author-id">Autor</label>
+                            <select id="author-id" required></select>
+                        </div>
+                    </div>
+
+                    <div class="field-grid">
+                        <div class="field">
+                            <label for="tags">Tags (separadas por virgula)</label>
+                            <input id="tags" placeholder="ia, tecnologia, negocios">
+                        </div>
+                        <div class="field">
+                            <label for="image-url">Imagem URL</label>
+                            <input id="image-url" type="url" placeholder="https://...">
+                        </div>
+                    </div>
+
+                    <div class="field-grid">
+                        <div class="field">
+                            <label for="seo-title">SEO Title</label>
+                            <input id="seo-title">
+                        </div>
+                        <div class="field">
+                            <label for="seo-image">SEO Image URL</label>
+                            <input id="seo-image" type="url">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="seo-description">SEO Description</label>
+                        <textarea id="seo-description" rows="2"></textarea>
+                    </div>
+
+                    <div class="checks">
+                        <label><input id="featured" type="checkbox"> Destacar na home</label>
+                        <label><input id="is-draft" type="checkbox" checked> Salvar como rascunho</label>
+                    </div>
+
+                    <div class="action-row">
+                        <button id="save-draft" type="button" class="ghost">Salvar rascunho</button>
+                        <button id="publish-now" type="button" class="warning">Publicar agora</button>
+                        <button type="submit">Salvar alteracoes</button>
+                    </div>
+                </form>
+            </section>
+        </section>
+    </main>
+
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>

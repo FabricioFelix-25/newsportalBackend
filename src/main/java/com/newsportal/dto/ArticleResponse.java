@@ -22,6 +22,12 @@ public class ArticleResponse {
     private String seoTitle;
     private String seoDescription;
     private String seoImage;
+    private Boolean aiAssisted;
+    private String sourceReferences;
+    private String reviewedBy;
+    private Boolean factChecked;
+    private Boolean rightsCleared;
+    private Boolean sensitiveContentReviewed;
     private Long viewCount;
 
     // Constructors
@@ -45,6 +51,12 @@ public class ArticleResponse {
         this.seoTitle = article.getSeoTitle();
         this.seoDescription = article.getSeoDescription();
         this.seoImage = article.getSeoImage();
+        this.aiAssisted = article.getAiAssisted();
+        this.sourceReferences = article.getSourceReferences();
+        this.reviewedBy = article.getReviewedBy();
+        this.factChecked = article.getFactChecked();
+        this.rightsCleared = article.getRightsCleared();
+        this.sensitiveContentReviewed = article.getSensitiveContentReviewed();
         this.viewCount = article.getViewCount();
     }
 
@@ -99,6 +111,24 @@ public class ArticleResponse {
 
     public String getSeoImage() { return seoImage; }
     public void setSeoImage(String seoImage) { this.seoImage = seoImage; }
+
+    public Boolean getAiAssisted() { return aiAssisted; }
+    public void setAiAssisted(Boolean aiAssisted) { this.aiAssisted = aiAssisted; }
+
+    public String getSourceReferences() { return sourceReferences; }
+    public void setSourceReferences(String sourceReferences) { this.sourceReferences = sourceReferences; }
+
+    public String getReviewedBy() { return reviewedBy; }
+    public void setReviewedBy(String reviewedBy) { this.reviewedBy = reviewedBy; }
+
+    public Boolean getFactChecked() { return factChecked; }
+    public void setFactChecked(Boolean factChecked) { this.factChecked = factChecked; }
+
+    public Boolean getRightsCleared() { return rightsCleared; }
+    public void setRightsCleared(Boolean rightsCleared) { this.rightsCleared = rightsCleared; }
+
+    public Boolean getSensitiveContentReviewed() { return sensitiveContentReviewed; }
+    public void setSensitiveContentReviewed(Boolean sensitiveContentReviewed) { this.sensitiveContentReviewed = sensitiveContentReviewed; }
 
     public Long getViewCount() { return viewCount; }
     public void setViewCount(Long viewCount) { this.viewCount = viewCount; }

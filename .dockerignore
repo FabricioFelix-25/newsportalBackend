@@ -1,0 +1,12 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!target/*.jar
+*~
+*.swp
+.idea/
+.vscode/
+.classpath
+.project
+.settings/
+.env
+uploads/

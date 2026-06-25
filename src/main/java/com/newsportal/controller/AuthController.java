@@ -1,5 +1,6 @@
 package com.newsportal.controller;
 
+import com.newsportal.dto.AuthenticatedUserResponse;
 import com.newsportal.dto.LoginRequest;
 import com.newsportal.dto.LoginResponse;
 import com.newsportal.dto.RegisterRequest;
@@ -9,11 +10,11 @@ import com.newsportal.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "*")
 public class AuthController {
 
     @Autowired
@@ -41,5 +42,11 @@ public class AuthController {
     public ResponseEntity<String> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
         authService.resetPassword(request.getToken(), request.getNewPassword());
         return ResponseEntity.ok("Password reset successfully");
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<AuthenticatedUserResponse> currentUser(Authentication authentication) {
+        AuthenticatedUserResponse response = authService.getCurrentUser(authentication.getName());
+        return ResponseEntity.ok(response);
     }
 }

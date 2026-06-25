@@ -23,6 +23,9 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 
     Page<Article> findByAuthorIdAndIsDraftFalseOrderByPublishedAtDesc(Long authorId, Pageable pageable);
 
+    @Query("SELECT a FROM Article a ORDER BY COALESCE(a.updatedAt, a.publishedAt) DESC")
+    Page<Article> findAllAdmin(Pageable pageable);
+
     @Query("SELECT a FROM Article a WHERE a.isDraft = false AND " +
             "(LOWER(a.title) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
             "LOWER(a.content) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
