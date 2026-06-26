@@ -25,7 +25,12 @@ public class FileUploadController {
 
         Map<String, String> response = new HashMap<>();
         response.put("filename", filename);
-        response.put("url", "/api/images/" + filename);
+        
+        if (filename.startsWith("http://") || filename.startsWith("https://")) {
+            response.put("url", filename);
+        } else {
+            response.put("url", "/api/images/" + filename);
+        }
 
         return ResponseEntity.ok(response);
     }
