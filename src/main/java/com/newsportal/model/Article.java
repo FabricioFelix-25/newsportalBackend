@@ -35,7 +35,7 @@ public class Article {
     @Column(columnDefinition = "TEXT")
     private String excerpt;
 
-    @Column(name = "image_url", length = 500)
+    @Column(name = "image_url", columnDefinition = "TEXT")
     private String imageUrl;
 
     @Enumerated(EnumType.STRING)
@@ -71,7 +71,7 @@ public class Article {
     @Column(name = "seo_description", columnDefinition = "TEXT")
     private String seoDescription;
 
-    @Column(name = "seo_image", length = 500)
+    @Column(name = "seo_image", columnDefinition = "TEXT")
     private String seoImage;
 
     @Column(name = "ai_assisted")
