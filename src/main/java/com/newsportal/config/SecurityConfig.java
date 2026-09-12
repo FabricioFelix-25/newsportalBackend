@@ -62,7 +62,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/auth/me").authenticated()
                         .requestMatchers(HttpMethod.POST, "/auth/register").hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.GET, "/articles/admin", "/articles/stats").hasAnyRole("ADMIN", "EDITOR")
+                        .requestMatchers(HttpMethod.GET, "/articles/admin", "/articles/admin/**", "/articles/stats").hasAnyRole("ADMIN", "EDITOR")
+                        .requestMatchers(HttpMethod.POST, "/articles/*/publish").hasAnyRole("ADMIN", "EDITOR")
                         .requestMatchers(HttpMethod.POST, "/articles/*/view").permitAll()
                         .requestMatchers(HttpMethod.GET, "/articles/**").permitAll()
 
@@ -74,8 +75,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
                         .requestMatchers("/upload/**").hasAnyRole("ADMIN", "EDITOR", "AUTHOR")
 
-                        .requestMatchers(HttpMethod.POST, "/articles").hasAnyRole("ADMIN", "EDITOR", "AUTHOR")
-                        .requestMatchers(HttpMethod.PUT, "/articles/**").hasAnyRole("ADMIN", "EDITOR", "AUTHOR")
+                        .requestMatchers(HttpMethod.POST, "/articles").hasAnyRole("ADMIN", "EDITOR", "AUTHOR", "BOT")
+                        .requestMatchers(HttpMethod.PUT, "/articles/**").hasAnyRole("ADMIN", "EDITOR")
                         .requestMatchers(HttpMethod.DELETE, "/articles/**").hasAnyRole("ADMIN", "EDITOR")
 
                         .anyRequest().authenticated()

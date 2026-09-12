@@ -11,8 +11,8 @@ import com.newsportal.repository.UserRepository;
 import com.newsportal.security.JwtService;
 import com.newsportal.security.LoginAttemptService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,9 +36,6 @@ public class AuthService {
 
     @Autowired
     private LoginAttemptService loginAttemptService;
-
-    @Value("${app.auth.debug-reset-token:false}")
-    private boolean debugResetToken;
 
     @Transactional
     public LoginResponse login(LoginRequest request) {
@@ -75,6 +72,7 @@ public class AuthService {
                 token, "Bearer", jwtService.extractExpiration(token).toInstant().getEpochSecond());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new BadRequestException("Email is already in use");
@@ -119,9 +117,7 @@ public class AuthService {
 
         userRepository.save(user);
 
-        if (debugResetToken) {
-            System.out.println("Reset token for " + email + ": " + resetToken);
-        }
+        // O envio por um canal privado ainda precisa ser integrado. Nunca registrar tokens nos logs.
     }
 
     public void resetPassword(String token, String newPassword) {

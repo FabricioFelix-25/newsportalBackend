@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Collections;
 
 @Component
@@ -29,10 +31,14 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
 
         final String requestApiKey = request.getHeader(API_KEY_HEADER);
 
-        if (requestApiKey != null && configuredApiKey != null && requestApiKey.equals(configuredApiKey)) {
-            // Se a chave API estiver correta, autentica como um BOT com papel de AUTHOR.
+        if (SecurityContextHolder.getContext().getAuthentication() == null
+                && request.getHeader("Authorization") == null
+                && requestApiKey != null && configuredApiKey != null && !configuredApiKey.isBlank()
+                && MessageDigest.isEqual(requestApiKey.getBytes(StandardCharsets.UTF_8),
+                    configuredApiKey.getBytes(StandardCharsets.UTF_8))) {
+            // O bot pode enviar rascunhos; revisão e publicação exigem uma conta editorial.
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    "AI_BOT", null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_AUTHOR")));
+                    "AI_BOT", null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_BOT")));
             
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);

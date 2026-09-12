@@ -28,6 +28,7 @@ public class ArticleRequest {
     private Long authorId;
 
     private Boolean featured = false;
+    @NotNull(message = "Draft status is required")
     private Boolean isDraft = true;
     private String seoTitle;
     private String seoDescription;

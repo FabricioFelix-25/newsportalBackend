@@ -54,7 +54,6 @@ class AuthServiceTest {
         ReflectionTestUtils.setField(jwtService, "expirationMinutes", 60L);
         ReflectionTestUtils.setField(authService, "jwtService", jwtService);
         ReflectionTestUtils.setField(authService, "loginAttemptService", loginAttemptService);
-        ReflectionTestUtils.setField(authService, "debugResetToken", false);
     }
 
     @Test

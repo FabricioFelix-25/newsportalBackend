@@ -2,6 +2,7 @@ package com.newsportal.service;
 
 import com.newsportal.dto.ArticleRequest;
 import com.newsportal.dto.ArticleResponse;
+import com.newsportal.dto.PublishArticleRequest;
 import com.newsportal.exception.BadRequestException;
 import com.newsportal.exception.ResourceNotFoundException;
 import com.newsportal.model.Article;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -23,6 +26,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class ArticleService {
 
     @Autowired
@@ -74,24 +78,32 @@ public class ArticleService {
         }
     }
 
-    public ArticleResponse getArticleById(Long id, boolean includeDrafts) {
+    public ArticleResponse getArticleById(Long id) {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Article not found with id: " + id));
-        if (!includeDrafts && Boolean.TRUE.equals(article.getIsDraft())) {
+        if (!Boolean.FALSE.equals(article.getIsDraft())) {
             throw new ResourceNotFoundException("Article not found with id: " + id);
         }
         return new ArticleResponse(article);
     }
 
-    public ArticleResponse getArticleBySlug(String slug, boolean includeDrafts) {
+    public ArticleResponse getArticleBySlug(String slug) {
         Article article = articleRepository.findBySlug(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("Article not found with slug: " + slug));
-        if (!includeDrafts && Boolean.TRUE.equals(article.getIsDraft())) {
+        if (!Boolean.FALSE.equals(article.getIsDraft())) {
             throw new ResourceNotFoundException("Article not found with slug: " + slug);
         }
         return new ArticleResponse(article);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'EDITOR')")
+    public ArticleResponse getArticleForReview(Long id) {
+        return new ArticleResponse(articleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Article not found with id: " + id)));
+    }
+
+    @Transactional
+    @PreAuthorize("hasAnyRole('ADMIN', 'EDITOR') or (hasAnyRole('AUTHOR', 'BOT') and #request.isDraft == true)")
     public ArticleResponse createArticle(ArticleRequest request) {
         validateEditorialChecklist(request);
 
@@ -114,7 +126,7 @@ public class ArticleService {
         article.setTags(request.getTags());
         article.setAuthor(author);
         article.setFeatured(request.getFeatured());
-        article.setIsDraft(request.getIsDraft());
+        applyPublicationStatus(article, request.getIsDraft());
         article.setSeoTitle(request.getSeoTitle());
         article.setSeoDescription(request.getSeoDescription());
         article.setSeoImage(request.getSeoImage());
@@ -124,6 +136,8 @@ public class ArticleService {
         return new ArticleResponse(savedArticle);
     }
 
+    @Transactional
+    @PreAuthorize("hasAnyRole('ADMIN', 'EDITOR')")
     public ArticleResponse updateArticle(Long id, ArticleRequest request) {
         validateEditorialChecklist(request);
 
@@ -142,7 +156,7 @@ public class ArticleService {
         article.setTags(request.getTags());
         article.setAuthor(author);
         article.setFeatured(request.getFeatured());
-        article.setIsDraft(request.getIsDraft());
+        applyPublicationStatus(article, request.getIsDraft());
         article.setSeoTitle(request.getSeoTitle());
         article.setSeoDescription(request.getSeoDescription());
         article.setSeoImage(request.getSeoImage());
@@ -152,6 +166,34 @@ public class ArticleService {
         return new ArticleResponse(savedArticle);
     }
 
+    @Transactional
+    @PreAuthorize("hasAnyRole('ADMIN', 'EDITOR')")
+    public ArticleResponse publishArticle(Long id, PublishArticleRequest request) {
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Article not found with id: " + id));
+        // Repetir a confirmação não muda a data nem o conteúdo de uma matéria já publicada.
+        if (Boolean.FALSE.equals(article.getIsDraft())) {
+            return new ArticleResponse(article);
+        }
+        ArticleRequest checklist = new ArticleRequest();
+        checklist.setIsDraft(false);
+        checklist.setSourceReferences(request.sourceReferences());
+        checklist.setReviewedBy(request.reviewedBy());
+        checklist.setFactChecked(request.factChecked());
+        checklist.setRightsCleared(request.rightsCleared());
+        checklist.setSensitiveContentReviewed(request.sensitiveContentReviewed());
+        validateEditorialChecklist(checklist);
+        article.setSourceReferences(request.sourceReferences().trim());
+        article.setReviewedBy(request.reviewedBy().trim());
+        article.setFactChecked(true);
+        article.setRightsCleared(true);
+        article.setSensitiveContentReviewed(true);
+        applyPublicationStatus(article, false);
+        return new ArticleResponse(articleRepository.save(article));
+    }
+
+    @Transactional
+    @PreAuthorize("hasAnyRole('ADMIN', 'EDITOR')")
     public void deleteArticle(Long id) {
         if (!articleRepository.existsById(id)) {
             throw new ResourceNotFoundException("Article not found with id: " + id);
@@ -159,20 +201,19 @@ public class ArticleService {
         articleRepository.deleteById(id);
     }
 
+    @Transactional
     public void trackView(Long articleId, String userAgent, String ipAddress) {
-        Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new ResourceNotFoundException("Article not found with id: " + articleId));
+        if (articleRepository.incrementPublishedViewCount(articleId) == 0) {
+            throw new ResourceNotFoundException("Article not found with id: " + articleId);
+        }
 
         ArticleView view = new ArticleView();
-        view.setArticle(article);
+        view.setArticle(articleRepository.getReferenceById(articleId));
         view.setUserAgent(userAgent);
         view.setIpAddress(ipAddress);
 
         articleViewRepository.save(view);
 
-        // Update view count
-        article.setViewCount(article.getViewCount() + 1);
-        articleRepository.save(article);
     }
 
     public List<String> getCategories() {
@@ -215,6 +256,16 @@ public class ArticleService {
         article.setFactChecked(Boolean.TRUE.equals(request.getFactChecked()));
         article.setRightsCleared(Boolean.TRUE.equals(request.getRightsCleared()));
         article.setSensitiveContentReviewed(Boolean.TRUE.equals(request.getSensitiveContentReviewed()));
+    }
+
+    private void applyPublicationStatus(Article article, Boolean isDraft) {
+        if (isDraft == null) {
+            throw new BadRequestException("Draft status is required");
+        }
+        if (!isDraft && !Boolean.FALSE.equals(article.getIsDraft())) {
+            article.setPublishedAt(LocalDateTime.now());
+        }
+        article.setIsDraft(isDraft);
     }
 
     private void validateEditorialChecklist(ArticleRequest request) {

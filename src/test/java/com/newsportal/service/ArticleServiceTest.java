@@ -11,7 +11,6 @@ import com.newsportal.repository.ArticleViewRepository;
 import com.newsportal.repository.AuthorRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -23,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -93,7 +93,7 @@ class ArticleServiceTest {
 
         when(articleRepository.findBySlug("draft-post")).thenReturn(Optional.of(draft));
 
-        assertThrows(ResourceNotFoundException.class, () -> articleService.getArticleBySlug("draft-post", false));
+        assertThrows(ResourceNotFoundException.class, () -> articleService.getArticleBySlug("draft-post"));
     }
 
     @Test
@@ -106,15 +106,21 @@ class ArticleServiceTest {
         article.setAuthor(new Author("A", "a@a.com", null, null));
         article.setViewCount(7L);
 
-        when(articleRepository.findById(10L)).thenReturn(Optional.of(article));
-        when(articleRepository.save(any(Article.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(articleRepository.incrementPublishedViewCount(10L)).thenReturn(1);
+        when(articleRepository.getReferenceById(10L)).thenReturn(article);
 
         articleService.trackView(10L, "Mozilla", "127.0.0.1");
 
-        ArgumentCaptor<Article> captor = ArgumentCaptor.forClass(Article.class);
-        verify(articleRepository).save(captor.capture());
-        assertEquals(8L, captor.getValue().getViewCount());
+        verify(articleRepository).incrementPublishedViewCount(10L);
         verify(articleViewRepository).save(any());
+    }
+
+    @Test
+    void trackViewShouldRejectDraftOrMissingArticleWithoutSavingView() {
+        when(articleRepository.incrementPublishedViewCount(10L)).thenReturn(0);
+        assertThrows(ResourceNotFoundException.class,
+                () -> articleService.trackView(10L, "Mozilla", "127.0.0.1"));
+        verifyNoInteractions(articleViewRepository);
     }
 
     @Test
@@ -142,4 +148,3 @@ class ArticleServiceTest {
         return request;
     }
 }
-

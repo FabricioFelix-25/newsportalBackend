@@ -2,6 +2,7 @@ package com.newsportal.dto;
 import com.newsportal.model.Article;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 public class ArticleResponse {
@@ -42,7 +43,7 @@ public class ArticleResponse {
         this.excerpt = article.getExcerpt();
         this.imageUrl = article.getImageUrl();
         this.category = article.getCategory().name().toLowerCase().replace('_', '-');
-        this.tags = article.getTags();
+        this.tags = article.getTags() == null ? Set.of() : new HashSet<>(article.getTags());
         this.author = new AuthorResponse(article.getAuthor());
         this.publishedAt = article.getPublishedAt();
         this.updatedAt = article.getUpdatedAt();

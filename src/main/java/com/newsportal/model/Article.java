@@ -2,7 +2,8 @@ package com.newsportal.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import org.springframework.data.annotation.CreatedDate;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
+@DynamicUpdate
 @Table(name = "articles")
 @EntityListeners(AuditingEntityListener.class)
 public class Article {
@@ -43,6 +45,7 @@ public class Article {
     private Category category;
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @BatchSize(size = 50)
     @CollectionTable(name = "article_tags", joinColumns = @JoinColumn(name = "article_id"))
     @Column(name = "tag")
     private Set<String> tags;
@@ -51,8 +54,7 @@ public class Article {
     @JoinColumn(name = "author_id", nullable = false)
     private Author author;
 
-    @CreatedDate
-    @Column(name = "published_at", updatable = false)
+    @Column(name = "published_at")
     private LocalDateTime publishedAt;
 
     @LastModifiedDate
