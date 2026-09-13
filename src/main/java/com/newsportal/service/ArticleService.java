@@ -49,7 +49,7 @@ public class ArticleService {
     }
 
     public List<ArticleResponse> getFeaturedArticles() {
-        return articleRepository.findByFeaturedTrueAndIsDraftFalseOrderByPublishedAtDesc()
+        return articleRepository.findTop3ByIsDraftFalseAndPublishedAtIsNotNullOrderByPublishedAtDescIdDesc()
                 .stream()
                 .map(ArticleResponse::new)
                 .collect(Collectors.toList());

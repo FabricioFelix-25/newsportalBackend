@@ -19,7 +19,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     Optional<Article> findBySlug(String slug);
 
     @EntityGraph(attributePaths = "author")
-    List<Article> findByFeaturedTrueAndIsDraftFalseOrderByPublishedAtDesc();
+    List<Article> findTop3ByIsDraftFalseAndPublishedAtIsNotNullOrderByPublishedAtDescIdDesc();
 
     @EntityGraph(attributePaths = "author")
     Page<Article> findByIsDraftFalseOrderByPublishedAtDesc(Pageable pageable);

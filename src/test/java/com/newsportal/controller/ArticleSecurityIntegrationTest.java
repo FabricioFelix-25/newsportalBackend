@@ -240,6 +240,57 @@ class ArticleSecurityIntegrationTest {
         assertFalse(users.existsByEmail("other@example.test"));
     }
 
+    @Test
+    void featuredAutomaticallyRotatesOnPublicationAndUnpublication() throws Exception {
+        LocalDateTime now = LocalDateTime.now();
+        Article second = article("segunda", false, "publico");
+        second.setPublishedAt(now.minusDays(2));
+        second.setFeatured(false);
+        articles.save(second);
+        Article third = article("terceira", false, "publico");
+        third.setPublishedAt(now.minusDays(1));
+        third.setFeatured(false);
+        articles.save(third);
+        mvc.perform(get("/articles/featured"))
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].id").value(third.getId()))
+                .andExpect(jsonPath("$[2].id").value(published.getId()));
+
+        mvc.perform(post("/articles/{id}/publish", draft.getId()).header("Authorization", editorToken)
+                        .contentType(MediaType.APPLICATION_JSON).content(json.writeValueAsString(validChecklist())))
+                .andExpect(status().isOk());
+        mvc.perform(get("/articles/featured"))
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].id").value(draft.getId()))
+                .andExpect(jsonPath("$[1].id").value(third.getId()))
+                .andExpect(jsonPath("$[2].id").value(second.getId()));
+
+        Article unpublished = articles.findById(draft.getId()).orElseThrow();
+        unpublished.setIsDraft(true);
+        articles.save(unpublished);
+        mvc.perform(get("/articles/featured"))
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].id").value(third.getId()))
+                .andExpect(jsonPath("$[2].id").value(published.getId()));
+    }
+
+    @Test
+    void featuredUsesPublicationTimeWithStableTiesAndExcludesUndatedArticles() throws Exception {
+        Article undated = article("sem-data", false, "publico");
+        undated.setPublishedAt(null);
+        articles.save(undated);
+        Article tied = article("mesma-data", false, "publico");
+        tied.setPublishedAt(published.getPublishedAt());
+        tied.setFeatured(false);
+        articles.save(tied);
+        published.setTitle("Título editado posteriormente");
+        articles.save(published);
+        mvc.perform(get("/articles/featured"))
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id").value(tied.getId()))
+                .andExpect(jsonPath("$[1].id").value(published.getId()));
+    }
+
     private Article article(String slug, boolean isDraft, String tag) {
         Article article = new Article(slug, slug, "<p>Texto integral " + slug + "</p>", "Resumo da noticia",
                 "https://example.test/editorial.jpg", Article.Category.TECH, author);
